@@ -5,10 +5,6 @@
 #include <ctime>
 #include <algorithm>
 using namespace std;
-
-// ─────────────────────────────────────────────
-//  Base class: Person
-// ─────────────────────────────────────────────
 class Person {
 protected:
     string name;
@@ -20,9 +16,6 @@ public:
     string getPhone() const { return phone; }
 };
 
-// ─────────────────────────────────────────────
-//  FoodItem
-// ─────────────────────────────────────────────
 struct FoodItem {
     string itemName;
     int    quantity;
@@ -32,9 +25,6 @@ struct FoodItem {
     double total() const { return quantity * price; }
 };
 
-// ─────────────────────────────────────────────
-//  Guest  (inherits Person)
-// ─────────────────────────────────────────────
 class Guest : public Person {
     int    roomNumber;
     int    daysStayed;
@@ -61,12 +51,9 @@ public:
     }
 };
 
-// ─────────────────────────────────────────────
-//  Room
-// ─────────────────────────────────────────────
 class Room {
     int    roomNumber;
-    string type;        // Single / Double / Suite
+    string type;       
     double pricePerDay;
     bool   isBooked;
 
@@ -91,15 +78,11 @@ public:
     }
 };
 
-// ─────────────────────────────────────────────
-//  Hotel  (main management class)
-// ─────────────────────────────────────────────
 class Hotel {
     string         hotelName;
     vector<Room>   rooms;
     vector<Guest>  guests;
 
-    // Food menu
     struct MenuItem { string name; double price; };
     vector<MenuItem> menu = {
         {"Masala Dosa",     80 },
@@ -112,7 +95,6 @@ class Hotel {
         {"Fresh Juice",     70 }
     };
 
-    // ── helpers ──────────────────────────────
     void printHeader(const string& title) const {
         cout << "\n" << string(55, '=') << "\n";
         cout << "  " << title << "\n";
@@ -133,7 +115,6 @@ class Hotel {
 
 public:
     Hotel(string name) : hotelName(name) {
-        // Seed rooms
         rooms.push_back(Room(101, "Single", 1500));
         rooms.push_back(Room(102, "Single", 1500));
         rooms.push_back(Room(103, "Single", 1500));
@@ -142,8 +123,6 @@ public:
         rooms.push_back(Room(301, "Suite",  5000));
         rooms.push_back(Room(302, "Suite",  5000));
     }
-
-    // ── 1. View Rooms ─────────────────────────
     void viewRooms() {
         printHeader("Room Availability — " + hotelName);
         cout << "  " << string(51, '-') << "\n";
@@ -151,7 +130,6 @@ public:
         cout << "  " << string(51, '-') << "\n";
     }
 
-    // ── 2. Book Room ──────────────────────────
     void bookRoom() {
         printHeader("Book a Room");
         viewRooms();
@@ -179,8 +157,6 @@ public:
         cout << "\n  [✓] Room " << roomNum << " booked for " << name
              << " for " << days << " day(s).\n";
     }
-
-    // ── 3. Order Food ─────────────────────────
     void orderFood() {
         printHeader("Food Ordering");
 
@@ -222,7 +198,6 @@ public:
         }
     }
 
-    // ── 4. View Food Orders ───────────────────
     void viewFoodOrders() {
         printHeader("View Food Orders");
         int roomNum;
@@ -248,7 +223,6 @@ public:
         cout << "  Food Total: Rs." << fixed << setprecision(0) << guest->getFoodTotal() << "\n";
     }
 
-    // ── 5. Generate Bill ──────────────────────
     void generateBill() {
         printHeader("Generate Bill / Checkout");
 
@@ -266,8 +240,6 @@ public:
         double subtotal   = roomCharge + foodCharge;
         double gst        = subtotal * 0.18;
         double total      = subtotal + gst;
-
-        // ── Bill printout ──
         cout << "\n" << string(50, '*') << "\n";
         cout << "          " << hotelName << "\n";
         cout << "              INVOICE\n";
@@ -278,13 +250,11 @@ public:
         cout << "  Days     : " << guest->getDaysStayed() << "\n";
         cout << string(50, '-') << "\n";
 
-        // Room charge
         cout << "  Room Charges\n";
         cout << "    Rs." << room->getPricePerDay() << "/day x "
              << guest->getDaysStayed() << " days"
              << "  =  Rs." << fixed << setprecision(2) << roomCharge << "\n";
 
-        // Food
         cout << "\n  Food Orders\n";
         const auto& orders = guest->getFoodOrders();
         if (orders.empty()) {
@@ -307,13 +277,11 @@ public:
         cout << "      Thank you for staying at " << hotelName << "!\n";
         cout << string(50, '*') << "\n";
 
-        // Checkout
         char ch;
         cout << "\nCheckout and free the room? (y/n): ";
         cin >> ch;
         if (ch == 'y' || ch == 'Y') {
             room->vacate();
-            // Remove guest from list
             guests.erase(
                 remove_if(guests.begin(), guests.end(),
                     [roomNum](const Guest& g){ return g.getRoomNumber() == roomNum; }),
@@ -322,8 +290,6 @@ public:
             cout << "  [✓] Room " << roomNum << " is now available.\n";
         }
     }
-
-    // ── 6. Display All Guests ─────────────────
     void displayGuests() {
         printHeader("Current Guests");
         if (guests.empty()) { cout << "  No guests currently checked in.\n"; return; }
@@ -342,7 +308,6 @@ public:
         cout << "  " << string(55, '-') << "\n";
     }
 
-    // ── Main Menu ─────────────────────────────
     void run() {
         int choice;
         do {
@@ -373,10 +338,6 @@ public:
         } while (choice != 0);
     }
 };
-
-// ─────────────────────────────────────────────
-//  main
-// ─────────────────────────────────────────────
 int main() {
     Hotel hotel("Grand Palace Hotel");
     hotel.run();
